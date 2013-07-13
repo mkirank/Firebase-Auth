@@ -16,6 +16,12 @@ WriteMakefile(
     },
     BUILD_REQUIRES => {
         'Test::More' => 0,
+        'JSON::XS' =>0,
+        'Carp' => 0,
+        'Digest::SHA' => 0,
+        'JSON::XS' => 0,
+        'POSIX'   => 0,
+        'MIME::Base64'  => 0,
     },
     PREREQ_PM => {
         #'ABC'              => 1.6,

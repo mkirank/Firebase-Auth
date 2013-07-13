@@ -3,12 +3,12 @@ package Firebase::Auth;
 use strict;
 use warnings;
 use Carp 'croak';
-use Digest::SHA qw(hmac_sha256_hex);
-use JSON;
+use Digest::SHA qw(hmac_sha256);
+use JSON::XS;
 use POSIX;
 use MIME::Base64;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new {
     my $class = shift;
@@ -57,9 +57,10 @@ sub _encode_token {
     my $self   = shift;
     my $claims = shift;
 
-    my $encoded_header = $self->urlbase64_encode(
-        encode_json( { 'alg' => 'HS256', 'typ' => 'JWT' } ) );
-    my $encoded_claims = $self->urlbase64_encode( encode_json($claims) );
+    my $ejsn = JSON::XS->new->utf8->space_after->encode ({'typ'=> 'JWT', 'alg'=> 'HS256'}) ;
+    my $encoded_header = $self->urlbase64_encode( $ejsn);
+    my $eclm = JSON::XS->new->utf8->space_after->encode ($claims);
+    my $encoded_claims = $self->urlbase64_encode( $eclm );
 
     my $secure_bits = $encoded_header . $self->{TOKEN_SEP} . $encoded_claims;
     my $sig = $self->_sign($secure_bits);
@@ -80,7 +81,7 @@ sub urlbase64_encode {
 sub _sign {
     my $self = shift;
     my $bits = shift;
-    my $digest=hmac_sha256_hex($bits, $self->{token}); 
+    my $digest=hmac_sha256($bits, $self->{token}); 
     return $digest;
 
 }

@@ -43,6 +43,10 @@ sub create_token {
     if ( ref($options) ne "HASH" ||  !$options ) {
         $options = {};
     }
+    if ( ref($data) ne "HASH" ||  !$data) {
+        $data = {};
+    }
+
     my $claims = $self->_create_options_claims( $options );
     $claims->{v} = $self->{TOKEN_VERSON};
     my $t=time; 
